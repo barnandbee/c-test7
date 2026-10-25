@@ -1,0 +1,6 @@
+node_modules/
+dist/
+*.local
+.DS_Store
+# Personal backups exported from the app. Never commit these.
+training-week-backup*.json

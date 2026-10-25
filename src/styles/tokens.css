@@ -1,0 +1,51 @@
+/* Colours and type, taken from the 1940s poster look:
+   cream paper, navy ink, rust, ochre, slate blue and deep teal.
+   Every category colour meets WCAG AA (4.5:1) against --surface and --bg. */
+:root {
+  --font-display: "Oswald Variable", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --bg: #f1e6cc;
+  --surface: #fbf5e6;
+  --ink: #1c2433;
+  --muted: #5a5142;
+  --line: #d6c49e;
+  --soft: #ebdfc2;
+  --band: #1c2a3a;
+  --band-ink: #f4e8cc;
+  --band-accent: #e3b04b;
+
+  --easy: #2c5282;
+  --spice: #a3361f;
+  --strength: #6b4426;
+  --mobility: #1f5f55;
+  --bonus: #7d5508;
+
+  --focus: #2c5282;
+  --on-c: #fbf5e6;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12171d;
+    --surface: #1c242d;
+    --ink: #f1e3c2;
+    --muted: #b8ab90;
+    --line: #36414c;
+    --soft: #252f39;
+    --band: #0b1015;
+    --band-ink: #f1e3c2;
+    --band-accent: #e3b04b;
+
+    --easy: #8fb4e3;
+    --spice: #f08f72;
+    --strength: #d9ab7f;
+    --mobility: #6cc3b2;
+    --bonus: #e3b94f;
+
+    --focus: #8fb4e3;
+    --on-c: #12171d;
+    color-scheme: dark;
+  }
+}
