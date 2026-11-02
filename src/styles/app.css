@@ -18,7 +18,8 @@ body {
   font-size: 16px;
   line-height: 1.5;
   min-height: 100vh;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* Room for the fixed tab bar */
+  padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
 }
 .wrap {
   max-width: 980px;
@@ -439,38 +440,10 @@ button {
   min-height: 44px;
 }
 
-/* About dialog */
-dialog.about {
-  background: var(--surface);
-  color: var(--ink);
-  border: 1px solid var(--line);
-  border-top: 6px solid var(--band-accent);
-  border-radius: 16px;
-  padding: 24px;
-  max-width: min(360px, calc(100vw - 32px));
-  text-align: center;
-}
-dialog.about::backdrop {
-  background: rgb(10 14 20 / 0.6);
-}
-dialog.about img {
-  display: block;
-  margin: 0 auto 12px;
-  border-radius: 50%;
-  width: 160px;
-  height: auto;
-}
-dialog.about p {
-  margin: 0 0 12px;
-}
-dialog.about h2 {
-  margin-bottom: 4px;
-}
-
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%) translateY(20px);
   background: var(--ink);
   color: var(--bg);

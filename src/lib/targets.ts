@@ -1,5 +1,5 @@
 import { CATEGORIES, CATEGORY_ORDER } from "../data/categories";
-import type { Category, Session } from "../types";
+import type { AppData, Category, Session } from "../types";
 import { addDays } from "./dates";
 import { sessionsBetween } from "./sessions";
 
@@ -37,4 +37,9 @@ export function weekSummary(
 /** True when every non-optional category met its target that week. */
 export function allTargetsMet(summary: LaneSummary[]): boolean {
   return summary.every((l) => CATEGORIES[l.category].optional || l.met);
+}
+
+export function setTarget(data: AppData, category: Category, value: number): AppData {
+  const n = Math.max(0, Math.min(14, Math.floor(value)));
+  return { ...data, settings: { ...data.settings, targets: { ...data.settings.targets, [category]: n } } };
 }

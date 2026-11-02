@@ -52,6 +52,7 @@ Each activity looks like this:
   ],
   legs: true,   // optional: leg-heavy, warns if planned the day before a spice run
   neck: true,   // optional: counts as the weekly neck and shoulders session
+  pace: "easy", // optional, runs only: shows your easy | recovery | tempo | race pace on the card
 }
 ```
 
@@ -59,6 +60,20 @@ Each activity looks like this:
 - To remove an activity, delete it. Past sessions keep their own copy of the title and category, so your history isn't affected.
 - Don't reuse an old `id` for a different activity.
 - Run `npm run build` afterwards. TypeScript will point out typos in field names or categories.
+
+You can also make your own activities in the app (Library → New activity, or Duplicate on any activity). Those are stored with your data, not in this file.
+
+## Paces
+
+The Paces tab works out your training paces from your current 5km time (from a recent race or your watch's race predictor). Update the time whenever it changes and every pace follows.
+
+- 5km race pace: 5km time ÷ 5
+- Tempo: 6–9% slower than 5km pace
+- Easy: 25–32% slower than 5km pace (also used for long runs)
+- Recovery: from the slow end of easy to 30 seconds per km slower
+- 10km: your own time if entered, otherwise predicted from 5km with Riegel's formula
+
+You can set your own easy and tempo ranges instead. The multipliers live in `src/lib/paces.ts`. Your times are stored only in your browser, never in this repository.
 
 ## Your data
 
@@ -68,6 +83,13 @@ The stored data has a `version` number. When the data shape changes, a migration
 
 ### Back up and restore
 
-Export and import arrive in the next phase of development. This section will be updated then.
+Go to **Settings → Back up and restore**.
+
+- **Export backup** downloads `training-week-backup-YYYY-MM-DD.json` with everything: sessions and logs, your own activities, favourites, targets and paces. On an iPhone it goes to the Files app (Downloads).
+- **Import backup…** reads one of those files and **replaces** everything on this device, after asking you to confirm. Backups from older versions of the app are upgraded automatically.
+
+To move to a new phone: export on the old one, send yourself the file, then import it on the new one.
+
+If the app ever says it couldn't read your saved data, it stops saving so nothing gets overwritten. Importing a backup fixes that.
 
 Never commit backup files to this repository, because it's public. `.gitignore` already excludes files named `training-week-backup*.json`.

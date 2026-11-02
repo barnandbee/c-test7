@@ -27,6 +27,25 @@ describe("migrate", () => {
     expect(out.settings.targets).toMatchObject({ easy: 3, spice: 1, strength: 2, mobility: 2, bonus: 1 });
   });
 
+  it("upgrades version 1 data without losing sessions or targets", () => {
+    const sess = s("2026-10-20", "easy", { done: true });
+    const v1 = { version: 1, sessions: [sess], settings: { targets: { easy: 3, spice: 1, strength: 2, mobility: 2, bonus: 0 } } };
+    const out = migrate(JSON.parse(JSON.stringify(v1)));
+    expect(out.version).toBe(2);
+    expect(out.sessions).toEqual([sess]);
+    expect(out.settings).toEqual({
+      targets: { easy: 3, spice: 1, strength: 2, mobility: 2, bonus: 0 },
+      favourites: [],
+      paces: {},
+    });
+    expect(out.customActivities).toEqual([]);
+  });
+
+  it("drops invalid pace settings", () => {
+    const out = migrate({ ...emptyData(), settings: { ...emptyData().settings, paces: { fiveK: "fast", tenK: 2995, easyOverride: [1] } } });
+    expect(out.settings.paces).toEqual({ tenK: 2995 });
+  });
+
   it("rejects data from a newer version", () => {
     expect(() => migrate({ version: CURRENT_VERSION + 1 })).toThrow(DataVersionError);
   });

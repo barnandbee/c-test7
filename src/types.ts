@@ -1,5 +1,8 @@
 export type Category = "easy" | "spice" | "strength" | "mobility" | "bonus";
 
+/** Which of your training paces a run activity uses. */
+export type PaceZone = "easy" | "recovery" | "tempo" | "race";
+
 export interface Link {
   label: string;
   url: string;
@@ -28,6 +31,14 @@ export interface Activity {
   legs?: boolean;
   /** Counts as the weekly neck and shoulders mobility session. */
   neck?: boolean;
+  /** Shows your matching pace on the activity card. */
+  pace?: PaceZone;
+}
+
+/** An activity you created. Deleted ones are kept (hidden) so past sessions still resolve. */
+export interface CustomActivity extends Activity {
+  custom: true;
+  deleted?: boolean;
 }
 
 /** What a session remembers about its activity, so history survives library edits. */
@@ -39,6 +50,23 @@ export interface ActivitySnapshot {
   neck?: boolean;
 }
 
+export interface ExerciseLog {
+  name: string;
+  sets?: number;
+  reps?: number;
+  weightKg?: number;
+}
+
+export interface SessionLog {
+  distanceKm?: number;
+  durationMin?: number;
+  /** 1–10 */
+  effort?: number;
+  weightKg?: number;
+  note?: string;
+  exercises?: ExerciseLog[];
+}
+
 export interface Session {
   id: string;
   activityId: string;
@@ -46,14 +74,28 @@ export interface Session {
   date: string;
   done: boolean;
   snapshot: ActivitySnapshot;
+  log?: SessionLog;
+}
+
+/** Times in seconds. Ranges are seconds per km, [faster, slower]. */
+export interface PaceSettings {
+  fiveK?: number;
+  tenK?: number;
+  easyOverride?: [number, number];
+  tempoOverride?: [number, number];
+  /** Local date the race times were last changed. */
+  updated?: string;
 }
 
 export interface Settings {
   targets: Record<Category, number>;
+  favourites: string[];
+  paces: PaceSettings;
 }
 
 export interface AppData {
   version: number;
   sessions: Session[];
+  customActivities: CustomActivity[];
   settings: Settings;
 }

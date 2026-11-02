@@ -1,39 +1,19 @@
-import { useEffect, useRef } from "preact/hooks";
+import { Sheet } from "./Sheet";
 
 const logoUrl = `${import.meta.env.BASE_URL}bass-moultapps-logo.jpg`;
 
-export function AboutDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const ref = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (open && !el.open) el.showModal();
-    if (!open && el.open) el.close();
-  }, [open]);
-
+export function AboutDialog({ onClose }: { onClose: () => void }) {
   return (
-    <dialog
-      ref={ref}
-      class="about"
-      aria-labelledby="about-title"
-      onClose={onClose}
-      onClick={(e) => {
-        // Click on the backdrop closes the dialog.
-        if (e.target === ref.current) onClose();
-      }}
-    >
+    <Sheet title="About" onClose={onClose} class="about">
       <img src={logoUrl} alt="Bass Moultapps logo: a stained-glass peacock in shades of blue" width={160} height={157} />
-      <h2 id="about-title">Training week</h2>
+      <h3>Training week</h3>
       <p>
         Made by <strong>Bass Moultapps</strong>.
       </p>
       <p class="muted">A weekly pick list for runs, strength and mobility. Everything is stored on this device; nothing is sent anywhere.</p>
-      <form method="dialog">
-        <button type="submit" class="btn">
-          Close
-        </button>
-      </form>
-    </dialog>
+      <button type="button" class="btn" onClick={onClose}>
+        Close
+      </button>
+    </Sheet>
   );
 }

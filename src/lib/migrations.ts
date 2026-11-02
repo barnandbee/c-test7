@@ -1,15 +1,21 @@
 import { CATEGORIES, CATEGORY_ORDER } from "../data/categories";
-import type { AppData, Category } from "../types";
+import type { AppData, Category, PaceSettings } from "../types";
 
-export const CURRENT_VERSION = 1;
+export const CURRENT_VERSION = 2;
 
 /**
  * Each entry upgrades data from version N to N + 1.
  * When the data shape changes: bump CURRENT_VERSION, add a migration here,
- * and add a test in migrations.test.ts. Never edit an existing migration.
+ * and add a test in storage.test.ts. Never edit an existing migration.
  */
 const MIGRATIONS: Record<number, (data: any) => any> = {
-  // 1: (d) => ({ ...d, version: 2, ... }),
+  // v2 adds custom activities, favourites, session logs and paces.
+  1: (d) => ({
+    ...d,
+    version: 2,
+    customActivities: [],
+    settings: { ...d.settings, favourites: [], paces: {} },
+  }),
 };
 
 export function defaultTargets(): Record<Category, number> {
@@ -17,7 +23,12 @@ export function defaultTargets(): Record<Category, number> {
 }
 
 export function emptyData(): AppData {
-  return { version: CURRENT_VERSION, sessions: [], settings: { targets: defaultTargets() } };
+  return {
+    version: CURRENT_VERSION,
+    sessions: [],
+    customActivities: [],
+    settings: { targets: defaultTargets(), favourites: [], paces: {} },
+  };
 }
 
 export class DataVersionError extends Error {}
@@ -38,13 +49,27 @@ export function migrate(raw: unknown): AppData {
   return normalise(data);
 }
 
+const isNum = (n: unknown): n is number => typeof n === "number" && Number.isFinite(n);
+const isRange = (r: unknown): r is [number, number] => Array.isArray(r) && r.length === 2 && r.every((n) => isNum(n) && n > 0);
+
+function normalisePaces(p: any): PaceSettings {
+  const out: PaceSettings = {};
+  if (!p || typeof p !== "object") return out;
+  if (isNum(p.fiveK) && p.fiveK > 0) out.fiveK = p.fiveK;
+  if (isNum(p.tenK) && p.tenK > 0) out.tenK = p.tenK;
+  if (isRange(p.easyOverride)) out.easyOverride = p.easyOverride;
+  if (isRange(p.tempoOverride)) out.tempoOverride = p.tempoOverride;
+  if (typeof p.updated === "string") out.updated = p.updated;
+  return out;
+}
+
 /** Fill in any missing fields with defaults so the rest of the app can trust the shape. */
 function normalise(data: any): AppData {
   const targets = defaultTargets();
   const stored = data.settings?.targets ?? {};
   for (const c of CATEGORY_ORDER) {
     const n = stored[c];
-    if (typeof n === "number" && Number.isFinite(n) && n >= 0) targets[c] = Math.floor(n);
+    if (isNum(n) && n >= 0) targets[c] = Math.floor(n);
   }
   const sessions = Array.isArray(data.sessions)
     ? data.sessions.filter(
@@ -58,9 +83,18 @@ function normalise(data: any): AppData {
           CATEGORY_ORDER.includes(s.snapshot.category),
       )
     : [];
+  const customActivities = Array.isArray(data.customActivities)
+    ? data.customActivities
+        .filter((a: any) => a && typeof a.id === "string" && typeof a.title === "string" && CATEGORY_ORDER.includes(a.category))
+        .map((a: any) => ({ ...a, custom: true, short: a.short || a.title, duration: a.duration ?? "", description: a.description ?? "" }))
+    : [];
+  const favourites = Array.isArray(data.settings?.favourites)
+    ? data.settings.favourites.filter((f: unknown) => typeof f === "string")
+    : [];
   return {
     version: CURRENT_VERSION,
     sessions: sessions.map((s: any) => ({ ...s, done: Boolean(s.done) })),
-    settings: { ...data.settings, targets },
+    customActivities,
+    settings: { targets, favourites, paces: normalisePaces(data.settings?.paces) },
   };
 }
