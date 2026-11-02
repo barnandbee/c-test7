@@ -5,14 +5,17 @@
 // - Never change an existing `id`. Past sessions point at it.
 // - `legs: true` marks a leg-heavy session (warns if it's the day before a spice run).
 // - `neck: true` marks a neck and shoulders mobility session.
-// - `pace` shows your matching training pace on run cards: easy | recovery | tempo | race.
+// - `paces` lists which of your training paces to show on a run card, worked out
+//   from your 5km time: race | tempo | long | easy | recovery. Put the main effort
+//   first; it also shows on the closed card. On spice runs, easy is shown as the
+//   warm-up and cool-down pace.
 
 import type { Activity } from "../types";
 
 export const LIBRARY: Activity[] = [
   // ---------- Easy runs ----------
   {
-    id: "easy-5k", category: "easy", title: "Easy 5km", short: "Easy 5km", duration: "30–35 min", pace: "easy",
+    id: "easy-5k", category: "easy", title: "Easy 5km", short: "Easy 5km", duration: "30–35 min", paces: ["easy"],
     description: "Your normal 5km at a pace where you could talk in full sentences.",
     steps: [
       "Start slower than feels natural for the first kilometre.",
@@ -21,7 +24,7 @@ export const LIBRARY: Activity[] = [
     ],
   },
   {
-    id: "easy-strides", category: "easy", title: "Easy 5km + strides", short: "5km + strides", duration: "35–40 min", pace: "easy",
+    id: "easy-strides", category: "easy", title: "Easy 5km + strides", short: "5km + strides", duration: "35–40 min", paces: ["easy"],
     description: "An easy run with a few short, quick bursts at the end. They help with form and speed without being tiring.",
     steps: [
       "Run your easy 5km.",
@@ -36,7 +39,7 @@ export const LIBRARY: Activity[] = [
     ],
   },
   {
-    id: "easy-recovery", category: "easy", title: "Recovery run", short: "Recovery 3–4km", duration: "20–25 min", pace: "recovery",
+    id: "easy-recovery", category: "easy", title: "Recovery run", short: "Recovery 3–4km", duration: "20–25 min", paces: ["recovery"],
     description: "3–4km, slower than your normal easy pace. Use this after a long run, a hard session or a poor night’s sleep.",
     steps: [
       "Keep it genuinely slow, even if it feels too easy.",
@@ -46,7 +49,7 @@ export const LIBRARY: Activity[] = [
 
   // ---------- Spice runs ----------
   {
-    id: "spice-runrecover", category: "spice", title: "Run / recover intervals", short: "Intervals", duration: "35–45 min",
+    id: "spice-runrecover", category: "spice", title: "Run / recover intervals", short: "Intervals", duration: "35–45 min", paces: ["tempo", "race", "easy"],
     description: "A simple time-based session from Canadian Running, with three levels. Start with the middle one.",
     steps: [
       "Warm up with 5–10 min of easy running.",
@@ -59,7 +62,7 @@ export const LIBRARY: Activity[] = [
     links: [{ label: "Canadian Running: go-to workouts for every runner", url: "https://runningmagazine.ca/?p=108521" }],
   },
   {
-    id: "spice-km", category: "spice", title: "Kilometre repeats", short: "Km repeats", duration: "40–45 min", pace: "race",
+    id: "spice-km", category: "spice", title: "Kilometre repeats", short: "Km repeats", duration: "40–45 min", paces: ["race", "easy"],
     description: "A classic 5km-focused session. It’s hard but short.",
     steps: [
       "Warm up with 10 min of easy running.",
@@ -71,7 +74,7 @@ export const LIBRARY: Activity[] = [
     links: [{ label: "Outside Run: getting started with interval running", url: "https://run.outsideonline.com/training/getting-started-with-interval-running/?scope=anon" }],
   },
   {
-    id: "spice-fartlek", category: "spice", title: "Landmark fartlek", short: "Fartlek", duration: "30–35 min",
+    id: "spice-fartlek", category: "spice", title: "Landmark fartlek", short: "Fartlek", duration: "30–35 min", paces: ["race", "easy"],
     description: "“Speed play”: unstructured faster bursts using things you pass. There’s no timing or pacing to worry about.",
     steps: [
       "Run steadily for 5–10 min to warm up.",
@@ -86,7 +89,7 @@ export const LIBRARY: Activity[] = [
     ],
   },
   {
-    id: "spice-hills-intro", category: "spice", title: "Intro hills (Jeff Galloway)", short: "Intro hills", duration: "30 min",
+    id: "spice-hills-intro", category: "spice", title: "Intro hills (Jeff Galloway)", short: "Intro hills", duration: "30 min", paces: ["easy"],
     description: "A gentle first hill session from Runner’s World that builds up very gradually.",
     steps: [
       "Jog for 10 min, then walk for 2 min.",
@@ -102,7 +105,7 @@ export const LIBRARY: Activity[] = [
     ],
   },
   {
-    id: "spice-hills-30", category: "spice", title: "Hill repeats: 6–8 × 30 sec", short: "Hill repeats", duration: "35 min",
+    id: "spice-hills-30", category: "spice", title: "Hill repeats: 6–8 × 30 sec", short: "Hill repeats", duration: "35 min", paces: ["easy"],
     description: "The step up from intro hills. Use a moderately steep hill rather than the steepest one around.",
     steps: [
       "Warm up with 10 min of easy running.",
@@ -114,7 +117,7 @@ export const LIBRARY: Activity[] = [
     links: [{ label: "Runkeeper: hill repeats workout", url: "https://runkeeper.com/cms/?p=8279" }],
   },
   {
-    id: "spice-tempo-5s", category: "spice", title: "Tempo intervals: 4 × 5 min", short: "Tempo 4×5", duration: "40 min", pace: "tempo",
+    id: "spice-tempo-5s", category: "spice", title: "Tempo intervals: 4 × 5 min", short: "Tempo 4×5", duration: "40 min", paces: ["tempo", "easy"],
     description: "Tempo running broken into chunks. This is the best first tempo session.",
     steps: [
       "Run easy for 5 min.",
@@ -126,7 +129,7 @@ export const LIBRARY: Activity[] = [
     links: [{ label: "Runner’s World SA: four fast tempo workouts", url: "https://www.runnersworld.co.za/training/four-fast-tempo-workouts-for-runners/" }],
   },
   {
-    id: "spice-tempo-classic", category: "spice", title: "Classic tempo run", short: "Tempo 20", duration: "40–50 min", pace: "tempo",
+    id: "spice-tempo-classic", category: "spice", title: "Classic tempo run", short: "Tempo 20", duration: "40–50 min", paces: ["tempo", "easy"],
     description: "One continuous block at tempo effort. If 20 minutes feels like too much at first, start with 15.",
     steps: [
       "Run easy for 10 min.",
@@ -137,7 +140,7 @@ export const LIBRARY: Activity[] = [
     links: [{ label: "Runner’s World SA: four fast tempo workouts", url: "https://www.runnersworld.co.za/training/four-fast-tempo-workouts-for-runners/" }],
   },
   {
-    id: "spice-long", category: "spice", title: "Long run: 10–12km", short: "Long run", duration: "65–80 min", pace: "easy",
+    id: "spice-long", category: "spice", title: "Long run: 10–12km", short: "Long run", duration: "65–80 min", paces: ["long"],
     description: "Your one or two monthly long runs. In a long-run week, it counts as your spice run.",
     steps: [
       "Run slower than your 5km pace (Runner’s World suggests 45 sec to 1:30 per km slower). You should still be able to chat.",

@@ -14,8 +14,8 @@ Personal fitness "pick list" web app. Static site, no backend, single user. Host
 
 ## Layout
 - `src/data/` – editable content: `library.ts` (built-in activities) and `categories.ts`. Keep content out of UI code.
-- `src/lib/` – pure, tested logic (dates, storage, migrations, targets, spacing, sessions/logs, activities/favourites, paces, backup, number parsing). No DOM or Preact imports here, except `storage.ts`, which takes a `Storage` argument so tests can pass a fake.
-- `src/route.ts` – hash routing (`#/`, `#/library`, `#/paces`, `#/settings`). No router library.
+- `src/lib/` – pure, tested logic (dates, storage, migrations, targets, spacing, sessions/logs, activities/favourites, paces, stats, backup, number parsing, chart ticks). No DOM or Preact imports here, except `storage.ts`, which takes a `Storage` argument so tests can pass a fake.
+- `src/route.ts` – hash routing (`#/`, `#/library`, `#/paces`, `#/stats`, `#/settings`). No router library.
 - `src/views/` – one component per tab. `src/components/` – shared pieces. Modals use `Sheet` (native `<dialog>`); `app.tsx` owns which one is open.
 - State lives in `app.tsx` and changes through `update(fn)`, where `fn` is a pure `AppData → AppData` function from `src/lib/`.
 - `src/styles/tokens.css` – all colours. `app.css` – layout.
@@ -28,6 +28,7 @@ Personal fitness "pick list" web app. Static site, no backend, single user. Host
 - Activity `id`s are permanent. Never rename one in `library.ts`. Custom activity ids start with `custom-`, and deleted ones are kept with `deleted: true` so past sessions still resolve.
 - Number inputs use `inputMode="decimal"` text fields parsed by `src/lib/numbers.ts` (accepts "5,2"), and times use `parseTime` (accepts "22:45" or "22.45"), because phone number pads may lack ":".
 - Category colours come from CSS custom properties `--easy`, `--spice` and so on. Set `--c` on an element to theme it by category. Any new colour must meet WCAG AA in light and dark.
+- Charts are plain SVG in `src/components/Charts.tsx`: single series only (never two y-axes), hover and keyboard tooltips, and a "Show as a table" view. Category colours fail colour-blind separation as a chart palette (rust and brown are close), so any chart by category must label every mark with its name.
 - Accessibility: real `<button>`s, visible `:focus-visible`, `aria-pressed` and `aria-expanded` where relevant, and respect `prefers-reduced-motion`. Mobile-first, with 40px+ tap targets.
 
 ## Data and storage

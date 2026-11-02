@@ -1,8 +1,8 @@
 import { useEffect, useState } from "preact/hooks";
 
-export type Route = "week" | "library" | "paces" | "settings";
+export type Route = "week" | "library" | "paces" | "stats" | "settings";
 
-const ROUTES: Route[] = ["week", "library", "paces", "settings"];
+const ROUTES: Route[] = ["week", "library", "paces", "stats", "settings"];
 
 export function routeFromHash(hash: string): Route {
   const r = hash.replace(/^#\/?/, "");

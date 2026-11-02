@@ -14,6 +14,7 @@ import { WeekView } from "./views/WeekView";
 import { LibraryView } from "./views/LibraryView";
 import { PacesView } from "./views/PacesView";
 import { SettingsView } from "./views/SettingsView";
+import { StatsView } from "./views/StatsView";
 
 type Modal =
   | { kind: "about" }
@@ -27,6 +28,7 @@ const TABS: [Route, string][] = [
   ["week", "Week"],
   ["library", "Library"],
   ["paces", "Paces"],
+  ["stats", "Stats"],
   ["settings", "Settings"],
 ];
 
@@ -34,6 +36,7 @@ const SUBTITLES: Record<Route, string> = {
   week: "Pick from the library, add to a day, tap to mark done.",
   library: "Tap an activity for details. Star your favourites.",
   paces: "Your training paces, worked out from your 5km time.",
+  stats: "Streaks, distance and progress over time.",
   settings: "Weekly targets, backups and app details.",
 };
 
@@ -137,6 +140,7 @@ export function App() {
           />
         )}
         {route === "paces" && <PacesView data={data} update={update} />}
+        {route === "stats" && <StatsView data={data} />}
         {route === "settings" && (
           <SettingsView
             data={data}

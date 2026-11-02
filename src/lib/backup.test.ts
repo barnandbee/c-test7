@@ -25,7 +25,7 @@ describe("backup", () => {
 
   it("upgrades older backups", () => {
     const v1 = JSON.stringify({ app: "training-week", version: 1, sessions: [], settings: { targets: {} } });
-    expect(parseBackup(v1).data.version).toBe(2);
+    expect(parseBackup(v1).data.version).toBe(3);
   });
 
   it("rejects files that aren't backups", () => {

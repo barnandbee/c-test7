@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 import { CATEGORIES, CATEGORY_ORDER } from "../data/categories";
-import { ZONE_LABELS } from "../lib/paces";
+import { ZONE_LABELS, ZONE_ORDER } from "../lib/paces";
 import type { Category, CustomActivity, Exercise, Link, PaceZone } from "../types";
 import { Sheet } from "./Sheet";
 
@@ -12,7 +12,6 @@ interface Props {
   onClose: () => void;
 }
 
-const ZONES: PaceZone[] = ["easy", "recovery", "tempo", "race"];
 
 export function ActivityEditor({ initial, isNew, onSave, onDelete, onClose }: Props) {
   const [a, setA] = useState<CustomActivity>(initial);
@@ -23,6 +22,10 @@ export function ActivityEditor({ initial, isNew, onSave, onDelete, onClose }: Pr
 
   const set = <K extends keyof CustomActivity>(key: K, value: CustomActivity[K]) => setA({ ...a, [key]: value });
   const isRun = a.category === "easy" || a.category === "spice";
+  const togglePace = (zone: PaceZone, on: boolean) => {
+    const rest = (a.paces ?? []).filter((z) => z !== zone);
+    set("paces", on ? ZONE_ORDER.filter((z) => z === zone || rest.includes(z)) : rest);
+  };
 
   const submit = (e: Event) => {
     e.preventDefault();
@@ -35,7 +38,7 @@ export function ActivityEditor({ initial, isNew, onSave, onDelete, onClose }: Pr
       // Flags only apply to their own category
       legs: a.category === "strength" ? a.legs : undefined,
       neck: a.category === "mobility" ? a.neck : undefined,
-      pace: isRun ? a.pace : undefined,
+      paces: isRun ? a.paces : undefined,
       steps: steps.split("\n"),
       links,
       exercises,
@@ -85,17 +88,16 @@ export function ActivityEditor({ initial, isNew, onSave, onDelete, onClose }: Pr
           </label>
         </div>
         {isRun && (
-          <label class="field">
-            <span>Show my pace for</span>
-            <select value={a.pace ?? ""} onChange={(e) => set("pace", (e.currentTarget.value || undefined) as PaceZone | undefined)}>
-              <option value="">None</option>
-              {ZONES.map((z) => (
-                <option key={z} value={z}>
-                  {ZONE_LABELS[z]}
-                </option>
-              ))}
-            </select>
-          </label>
+          <fieldset class="group">
+            <legend>Show my paces for (optional)</legend>
+            <p class="muted small">The first one ticked shows on the closed card.</p>
+            {ZONE_ORDER.map((z) => (
+              <label class="check" key={z}>
+                <input type="checkbox" checked={a.paces?.includes(z) ?? false} onChange={(e) => togglePace(z, e.currentTarget.checked)} />
+                <span>{ZONE_LABELS[z]}</span>
+              </label>
+            ))}
+          </fieldset>
         )}
         {a.category === "strength" && (
           <label class="check">

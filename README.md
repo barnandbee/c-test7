@@ -52,7 +52,8 @@ Each activity looks like this:
   ],
   legs: true,   // optional: leg-heavy, warns if planned the day before a spice run
   neck: true,   // optional: counts as the weekly neck and shoulders session
-  pace: "easy", // optional, runs only: shows your easy | recovery | tempo | race pace on the card
+  paces: ["tempo", "easy"], // optional, runs only: which of your paces to show, main effort first
+                            // race | tempo | long | easy | recovery
 }
 ```
 
@@ -65,15 +66,28 @@ You can also make your own activities in the app (Library → New activity, or D
 
 ## Paces
 
-The Paces tab works out your training paces from your current 5km time (from a recent race or your watch's race predictor). Update the time whenever it changes and every pace follows.
+The Paces tab works out your training paces from your current 5km time (from a recent race or your watch's race predictor). Update the time whenever it changes and every pace follows, including the paces shown on run cards in the library.
 
 - 5km race pace: 5km time ÷ 5
-- Tempo: 6–9% slower than 5km pace
-- Easy: 25–32% slower than 5km pace (also used for long runs)
+- Tempo: 25–30 seconds per mile slower than 5km pace (about 16–19 seconds per km)
+- Easy: 25–32% slower than 5km pace
+- Long run: 45 seconds to 1:30 per km slower than 5km pace
 - Recovery: from the slow end of easy to 30 seconds per km slower
 - 10km: your own time if entered, otherwise predicted from 5km with Riegel's formula
 
-You can set your own easy and tempo ranges instead. The multipliers live in `src/lib/paces.ts`. Your times are stored only in your browser, never in this repository.
+You can set your own easy and tempo ranges instead. The rules live in `src/lib/paces.ts`. Your times are stored only in your browser, never in this repository.
+
+## Stats
+
+The Stats tab shows:
+
+- **Streaks:** the current and longest run of weeks where every target except Bonus was met. This week counts once it's met, and doesn't break the streak while it's in progress.
+- **Weekly completion** over the last 4, 12 and 52 full weeks: the share of target sessions done (each category capped at its target, Bonus left out), and how many of those weeks had every target met. It only counts weeks since your first session.
+- **Running distance** per week or month for the last 12, from the distances you log on easy and spice runs.
+- **Sessions by category and by activity**, the most-used activities and your favourites.
+- **Strength progression:** weight and reps over time for each exercise you've logged.
+
+Every chart has a "Show as a table" option.
 
 ## Your data
 

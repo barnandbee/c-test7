@@ -1,5 +1,5 @@
 import { useState } from "preact/hooks";
-import { computePaces, EASY_FACTORS, formatRange, formatTime, parseTime, TEMPO_FACTORS } from "../lib/paces";
+import { computePaces, EASY_FACTORS, formatRange, formatTime, KM_PER_MILE, LONG_SECONDS_PER_KM, parseTime, TEMPO_SECONDS_PER_MILE } from "../lib/paces";
 import { formatShort, fromIso, today } from "../lib/dates";
 import type { AppData, PaceSettings } from "../types";
 import type { Update } from "../app";
@@ -103,7 +103,13 @@ export function PacesView({ data, update }: Props) {
             <div style={{ "--c": "var(--easy)" }}>
               <dt>Easy</dt>
               <dd>
-                <b>{formatRange(paces.easy)}</b> /km <small>Conversation pace. Also for long runs.</small>
+                <b>{formatRange(paces.easy)}</b> /km <small>Conversation pace.</small>
+              </dd>
+            </div>
+            <div style={{ "--c": "var(--easy)" }}>
+              <dt>Long run</dt>
+              <dd>
+                <b>{formatRange(paces.long)}</b> /km <small>Slower than 5km pace; you should still be able to chat.</small>
               </dd>
             </div>
             <div style={{ "--c": "var(--easy)" }}>
@@ -202,10 +208,14 @@ export function PacesView({ data, update }: Props) {
         <p>Everything is based on your 5km race pace (5km time ÷ 5).</p>
         <ul>
           <li>
-            Tempo: {pct(TEMPO_FACTORS[0])}–{pct(TEMPO_FACTORS[1])} slower than 5km pace.
+            Tempo: {TEMPO_SECONDS_PER_MILE[0]}–{TEMPO_SECONDS_PER_MILE[1]} seconds per mile slower than 5km pace (about{" "}
+            {Math.round(TEMPO_SECONDS_PER_MILE[0] / KM_PER_MILE)}–{Math.round(TEMPO_SECONDS_PER_MILE[1] / KM_PER_MILE)} seconds per km).
           </li>
           <li>
             Easy: {pct(EASY_FACTORS[0])}–{pct(EASY_FACTORS[1])} slower than 5km pace.
+          </li>
+          <li>
+            Long run: {LONG_SECONDS_PER_KM[0]} seconds to {formatTime(LONG_SECONDS_PER_KM[1])} per km slower than 5km pace.
           </li>
           <li>Recovery: from the slow end of easy to 30 seconds per km slower.</li>
           <li>10km: your own time if you enter one, otherwise predicted from your 5km with Riegel’s formula.</li>

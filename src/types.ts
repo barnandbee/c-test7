@@ -1,7 +1,7 @@
 export type Category = "easy" | "spice" | "strength" | "mobility" | "bonus";
 
 /** Which of your training paces a run activity uses. */
-export type PaceZone = "easy" | "recovery" | "tempo" | "race";
+export type PaceZone = "easy" | "recovery" | "long" | "tempo" | "race";
 
 export interface Link {
   label: string;
@@ -31,8 +31,8 @@ export interface Activity {
   legs?: boolean;
   /** Counts as the weekly neck and shoulders mobility session. */
   neck?: boolean;
-  /** Shows your matching pace on the activity card. */
-  pace?: PaceZone;
+  /** Which of your paces to show on the card, e.g. ["tempo", "easy"]. */
+  paces?: PaceZone[];
 }
 
 /** An activity you created. Deleted ones are kept (hidden) so past sessions still resolve. */

@@ -1,7 +1,7 @@
 import { useState } from "preact/hooks";
 import { exerciseVideoUrl } from "../lib/activities";
 import { DAY_NAMES } from "../lib/dates";
-import { paceForZone, type Paces } from "../lib/paces";
+import { paceLines, type Paces } from "../lib/paces";
 import type { Activity } from "../types";
 
 interface Props {
@@ -18,6 +18,7 @@ interface Props {
 export function ActivityCard({ activity: a, favourite, paces, onToggleFavourite, onAdd, onDuplicate, onEdit }: Props) {
   const [open, setOpen] = useState(false);
   const bodyId = `b-${a.id}`;
+  const lines = paces && a.paces?.length ? paceLines(paces, a.paces, a.category === "spice") : [];
   return (
     <article class="item" style={{ "--c": `var(--${a.category})` }}>
       <div class="item-top">
@@ -25,6 +26,11 @@ export function ActivityCard({ activity: a, favourite, paces, onToggleFavourite,
           <span class="t">
             {a.title}
             {onEdit && <span class="badge">Mine</span>}
+            {lines[0] && (
+              <span class="head-pace">
+                {lines[0].label}: {lines[0].value}
+              </span>
+            )}
           </span>
           <span class="time">{a.duration}</span>
         </button>
@@ -39,7 +45,21 @@ export function ActivityCard({ activity: a, favourite, paces, onToggleFavourite,
         </button>
       </div>
       <div class="body" id={bodyId} hidden={!open}>
-        {a.pace && paces && <p class="pace-line">{paceForZone(paces, a.pace)}</p>}
+        {lines.length > 0 && (
+          <dl class="pace-lines">
+            {lines.map((l) => (
+              <div key={l.zone}>
+                <dt>{l.label}</dt>
+                <dd>{l.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+        {!paces && (a.paces?.length ?? 0) > 0 && (
+          <p class="muted small">
+            Add your 5km time on the <a href="#/paces">Paces</a> tab to see your paces for this run.
+          </p>
+        )}
         {a.description && <p>{a.description}</p>}
         {a.steps && a.steps.length > 0 && (
           <ol>

@@ -57,7 +57,7 @@ function tidy(a: CustomActivity): CustomActivity {
   if (exercises?.length) out.exercises = exercises; else delete out.exercises;
   if (!out.legs) delete out.legs;
   if (!out.neck) delete out.neck;
-  if (!out.pace) delete out.pace;
+  if (!out.paces?.length) delete out.paces;
   return out;
 }
 

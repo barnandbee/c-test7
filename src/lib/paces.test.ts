@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computePaces, formatRange, formatTime, paceForZone, parseTime, riegel } from "./paces";
+import { computePaces, formatRange, formatTime, paceLines, parseTime, riegel } from "./paces";
 
 describe("parseTime", () => {
   it("reads minutes and seconds with a colon or full stop", () => {
@@ -38,8 +38,10 @@ describe("computePaces", () => {
     expect(formatTime(p.race)).toBe("4:33");
     expect(formatTime(p.tenK)).toBe("5:00"); // 49:55 / 10 = 4:59.5
     expect(p.tenKPredicted).toBe(false);
-    expect(formatRange(p.tempo)).toBe("4:49–4:58");
+    // Tempo: 25–30 sec per mile slower than 4:33/km = +15.5 to +18.6 sec per km
+    expect(formatRange(p.tempo)).toBe("4:49–4:52");
     expect(formatRange(p.easy)).toBe("5:41–6:00");
+    expect(formatRange(p.long)).toBe("5:18–6:03");
     expect(formatRange(p.recovery)).toBe("6:00–6:30");
   });
 
@@ -66,10 +68,29 @@ describe("computePaces", () => {
   });
 });
 
-describe("paceForZone", () => {
-  it("describes each zone", () => {
-    const p = computePaces({ fiveK: 1365 })!;
-    expect(paceForZone(p, "easy")).toBe("Easy pace: 5:41–6:00 /km");
-    expect(paceForZone(p, "race")).toBe("5km race pace: around 4:33 /km");
+describe("paceLines", () => {
+  const p = computePaces({ fiveK: 1365 })!;
+
+  it("puts the main effort first and calls easy the warm-up next to a harder pace", () => {
+    expect(paceLines(p, ["easy", "tempo"])).toEqual([
+      { zone: "tempo", label: "Tempo pace", value: "4:49–4:52 /km" },
+      { zone: "easy", label: "Warm-up and cool-down", value: "5:41–6:00 /km" },
+    ]);
+  });
+
+  it("keeps the activity's order for the harder paces", () => {
+    expect(paceLines(p, ["tempo", "race", "easy"]).map((l) => l.zone)).toEqual(["tempo", "race", "easy"]);
+  });
+
+  it("labels a lone easy pace as easy pace", () => {
+    expect(paceLines(p, ["easy"])).toEqual([{ zone: "easy", label: "Easy pace", value: "5:41–6:00 /km" }]);
+  });
+
+  it("calls easy the warm-up in a hard session with no other pace, like hills", () => {
+    expect(paceLines(p, ["easy"], true)[0].label).toBe("Warm-up and cool-down");
+  });
+
+  it("shows 5km pace as a single figure", () => {
+    expect(paceLines(p, ["race"])[0].value).toBe("4:33 /km");
   });
 });

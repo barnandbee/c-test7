@@ -31,7 +31,7 @@ describe("migrate", () => {
     const sess = s("2026-10-20", "easy", { done: true });
     const v1 = { version: 1, sessions: [sess], settings: { targets: { easy: 3, spice: 1, strength: 2, mobility: 2, bonus: 0 } } };
     const out = migrate(JSON.parse(JSON.stringify(v1)));
-    expect(out.version).toBe(2);
+    expect(out.version).toBe(3);
     expect(out.sessions).toEqual([sess]);
     expect(out.settings).toEqual({
       targets: { easy: 3, spice: 1, strength: 2, mobility: 2, bonus: 0 },
@@ -39,6 +39,22 @@ describe("migrate", () => {
       paces: {},
     });
     expect(out.customActivities).toEqual([]);
+  });
+
+  it("upgrades version 2 custom activities from one pace to a list", () => {
+    const v2 = {
+      version: 2,
+      sessions: [],
+      customActivities: [
+        { id: "custom-a", custom: true, category: "spice", title: "Tempo hills", short: "", duration: "", description: "", pace: "tempo" },
+        { id: "custom-b", custom: true, category: "bonus", title: "Swim", short: "", duration: "", description: "" },
+      ],
+      settings: { targets: {}, favourites: [], paces: {} },
+    };
+    const out = migrate(v2);
+    expect(out.customActivities[0].paces).toEqual(["tempo"]);
+    expect("pace" in out.customActivities[0]).toBe(false);
+    expect(out.customActivities[1].paces).toBeUndefined();
   });
 
   it("drops invalid pace settings", () => {

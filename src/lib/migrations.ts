@@ -1,7 +1,7 @@
 import { CATEGORIES, CATEGORY_ORDER } from "../data/categories";
 import type { AppData, Category, PaceSettings } from "../types";
 
-export const CURRENT_VERSION = 2;
+export const CURRENT_VERSION = 3;
 
 /**
  * Each entry upgrades data from version N to N + 1.
@@ -16,7 +16,15 @@ const MIGRATIONS: Record<number, (data: any) => any> = {
     customActivities: [],
     settings: { ...d.settings, favourites: [], paces: {} },
   }),
+  // v3 lets an activity show several paces: `pace: "tempo"` becomes `paces: ["tempo"]`.
+  2: (d) => ({
+    ...d,
+    version: 3,
+    customActivities: (d.customActivities ?? []).map(({ pace, ...a }: any) => (pace ? { ...a, paces: [pace] } : a)),
+  }),
 };
+
+const ZONES = ["race", "tempo", "long", "easy", "recovery"];
 
 export function defaultTargets(): Record<Category, number> {
   return Object.fromEntries(CATEGORY_ORDER.map((c) => [c, CATEGORIES[c].defaultTarget])) as Record<Category, number>;
@@ -86,7 +94,13 @@ function normalise(data: any): AppData {
   const customActivities = Array.isArray(data.customActivities)
     ? data.customActivities
         .filter((a: any) => a && typeof a.id === "string" && typeof a.title === "string" && CATEGORY_ORDER.includes(a.category))
-        .map((a: any) => ({ ...a, custom: true, short: a.short || a.title, duration: a.duration ?? "", description: a.description ?? "" }))
+        .map((a: any) => {
+          const out = { ...a, custom: true, short: a.short || a.title, duration: a.duration ?? "", description: a.description ?? "" };
+          const paces = Array.isArray(a.paces) ? a.paces.filter((z: unknown) => ZONES.includes(z as string)) : [];
+          if (paces.length) out.paces = paces;
+          else delete out.paces;
+          return out;
+        })
     : [];
   const favourites = Array.isArray(data.settings?.favourites)
     ? data.settings.favourites.filter((f: unknown) => typeof f === "string")
