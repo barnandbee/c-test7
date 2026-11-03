@@ -14,6 +14,8 @@
   --band: #1c2a3a;
   --band-ink: #f4e8cc;
   --band-accent: #e3b04b;
+  /* Overall awards (rosettes not tied to one category) */
+  --award: #1c2a3a;
 
   --easy: #2c5282;
   --spice: #a3361f;
@@ -37,6 +39,7 @@
     --band: #0b1015;
     --band-ink: #f1e3c2;
     --band-accent: #e3b04b;
+    --award: #e3b04b;
 
     --easy: #8fb4e3;
     --spice: #f08f72;

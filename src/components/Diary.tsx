@@ -9,6 +9,16 @@ interface Props {
   onAddTo: (date: string) => void;
   onToggle: (s: Session) => void;
   onRemove: (s: Session) => void;
+  onCalendar: (s: Session) => void;
+}
+
+function CalendarIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M3 10h18M8 3v4M16 3v4" />
+    </svg>
+  );
 }
 
 /** A short summary of what was logged, e.g. "5.2 km · 29 min". */
@@ -22,7 +32,7 @@ export function logSummary(s: Session): string {
   return bits.join(" · ");
 }
 
-export function Diary({ sessions, monday, onAddTo, onToggle, onRemove }: Props) {
+export function Diary({ sessions, monday, onAddTo, onToggle, onRemove, onCalendar }: Props) {
   const todayIso = today();
   const warnDates = legsBeforeSpiceDates(sessions);
   return (
@@ -47,6 +57,11 @@ export function Diary({ sessions, monday, onAddTo, onToggle, onRemove }: Props) 
                         {s.snapshot.short}
                         {summary && <small>{summary}</small>}
                       </button>
+                      {!s.done && (
+                        <button type="button" class="rm cal" aria-label={`Add ${s.snapshot.short} to calendar`} onClick={() => onCalendar(s)}>
+                          <CalendarIcon />
+                        </button>
+                      )}
                       <button type="button" class="rm" aria-label={`Remove ${s.snapshot.short}`} onClick={() => onRemove(s)}>
                         ×
                       </button>

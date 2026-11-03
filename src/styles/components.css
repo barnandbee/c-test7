@@ -796,3 +796,115 @@ section + section {
 .counts {
   counter-reset: none;
 }
+
+/* New version notice, above the tab bar */
+.update-banner {
+  position: fixed;
+  left: 8px;
+  right: 8px;
+  bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+  z-index: 11;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--band-accent);
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.18);
+}
+.update-banner span {
+  flex: 1 1 12em;
+  font-weight: 600;
+}
+
+/* Rosettes */
+.rosettes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+}
+.rosette {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+.rosette-svg .pleats,
+.rosette-svg .tail {
+  fill: var(--soft);
+  stroke: var(--line);
+  stroke-width: 1;
+}
+.rosette-svg .ring {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 2;
+}
+.rosette-svg .centre {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 1;
+}
+.rosette-svg .mark {
+  fill: var(--muted);
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+.rosette.won .rosette-svg .pleats,
+.rosette.won .rosette-svg .tail {
+  fill: var(--c);
+  stroke: none;
+}
+.rosette.won .rosette-svg .tail-2 {
+  opacity: 0.8;
+}
+.rosette.won .rosette-svg .ring {
+  stroke: var(--band-accent);
+}
+.rosette.won .rosette-svg .centre {
+  stroke: none;
+}
+.rosette.won .rosette-svg .mark {
+  fill: var(--ink);
+}
+.rosette-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+}
+.rosette-desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  flex: 1;
+}
+.rosette-status {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.rosette .meter {
+  width: 100%;
+}
+
+.chip .rm.cal {
+  padding: 0 8px;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

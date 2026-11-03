@@ -6,7 +6,18 @@ Made by Bass Moultapps.
 
 Live at **https://barnandbee.github.io/c-test7/**
 
-Everything runs in the browser. There is no server and no account, and your data never leaves your device.
+Everything runs in the browser. There is no server and no account, and your data never leaves your device. It can be installed on your phone's home screen and works offline.
+
+## Install on your phone
+
+- **iPhone (Safari):** open the site, tap **Share**, then **Add to Home Screen**.
+- **Android (Chrome):** open the site, tap the **⋮** menu, then **Install app** (or **Add to Home screen**).
+
+After the first visit the whole app is stored on the phone, so it opens and works with no signal. Links to YouTube videos and articles still need a connection.
+
+When a new version has been deployed, the app shows "A new version of the app is ready" with a **Reload** button. Your data isn't affected by updates.
+
+Installing it also helps keep your data safe: Safari can clear storage for websites you haven't visited in a while, but not for apps on your home screen.
 
 ## Run it locally
 
@@ -88,6 +99,16 @@ The Stats tab shows:
 - **Strength progression:** weight and reps over time for each exercise you've logged.
 
 Every chart has a "Show as a table" option.
+
+### Rosettes
+
+Twenty awards for goals reached along the way: first session, streaks, total sessions, running distance, spice, hill and tempo runs, strength, heavier weights, mobility, neck and shoulders sessions, bonus sessions and trying different activities. Each one shows your progress until you win it.
+
+They're defined in [`src/data/rosettes.ts`](src/data/rosettes.ts). Each has a name, a description, a short `mark` shown in the middle (up to 4 characters), a colour (a category, or `award`), a `goal`, and a `value` worked out from the facts in `src/lib/rosettes.ts`. Rosettes are worked out from your sessions each time, so changing a goal never loses anything.
+
+## Calendar
+
+On the Week tab, each planned session has a calendar button. Pick a start time and length (or all day) and it downloads a `.ics` calendar file. On an iPhone, tap the file to add it to Calendar. The event notes include the steps, exercises, links and your current paces for that run.
 
 ## Your data
 

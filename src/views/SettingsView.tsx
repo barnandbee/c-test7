@@ -5,6 +5,7 @@ import { backupFileName, exportJson, parseBackup } from "../lib/backup";
 import { today } from "../lib/dates";
 import type { AppData } from "../types";
 import type { Update } from "../app";
+import { download } from "../download";
 
 interface Props {
   data: AppData;
@@ -12,17 +13,6 @@ interface Props {
   onImport: (data: AppData) => void;
   toast: (msg: string) => void;
   onAbout: () => void;
-}
-
-function download(name: string, text: string) {
-  const url = URL.createObjectURL(new Blob([text], { type: "application/json" }));
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = name;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 export function SettingsView({ data, update, onImport, toast, onAbout }: Props) {
@@ -90,7 +80,7 @@ export function SettingsView({ data, update, onImport, toast, onAbout }: Props) 
             type="button"
             class="btn"
             onClick={() => {
-              download(backupFileName(today()), exportJson(data));
+              download(backupFileName(today()), exportJson(data), "application/json");
               toast("Backup exported");
             }}
           >

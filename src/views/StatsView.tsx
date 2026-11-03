@@ -15,6 +15,9 @@ import {
 } from "../lib/stats";
 import type { AppData } from "../types";
 import { ChartTable, ColumnChart, LineChart, StatTile } from "../components/Charts";
+import { RosetteGrid } from "../components/Rosettes";
+import { ROSETTES } from "../data/rosettes";
+import { evaluateRosettes, rosetteFacts } from "../lib/rosettes";
 
 const pct = (n: number) => `${Math.round(n * 100)}%`;
 const km = (n: number) => `${n.toLocaleString("en-GB", { maximumFractionDigits: 1 })} km`;
@@ -28,11 +31,24 @@ export function StatsView({ data }: { data: AppData }) {
   const [exercise, setExercise] = useState(exercises[0]?.name.toLowerCase() ?? "");
 
   const done = data.sessions.filter((s) => s.done);
+  const rosettes = evaluateRosettes(ROSETTES, rosetteFacts(data, now));
+  const rosetteSection = (
+    <section aria-labelledby="rosettes-title">
+      <h2 id="rosettes-title">Rosettes</h2>
+      <p class="muted small">
+        {rosettes.filter((r) => r.won).length} of {rosettes.length} won. Rosettes are awarded for goals you reach along the way.
+      </p>
+      <RosetteGrid rosettes={rosettes} />
+    </section>
+  );
   if (done.length === 0) {
     return (
-      <p class="empty-state">
-        Nothing to show yet. Mark a few sessions as done and your streaks, distances and progress will appear here.
-      </p>
+      <>
+        <p class="empty-state">
+          Nothing to show yet. Mark a few sessions as done and your streaks, distances and progress will appear here.
+        </p>
+        {rosetteSection}
+      </>
     );
   }
 
@@ -68,6 +84,8 @@ export function StatsView({ data }: { data: AppData }) {
         </div>
         <p class="muted small">Streaks count weeks where every target except Bonus was met. This week counts once it’s met.</p>
       </section>
+
+      {rosetteSection}
 
       <section aria-labelledby="completion-title">
         <h2 id="completion-title">Weekly completion</h2>

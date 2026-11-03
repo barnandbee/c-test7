@@ -10,16 +10,19 @@ import { AboutDialog } from "./components/AboutDialog";
 import { AddSessionSheet } from "./components/AddSessionSheet";
 import { SessionSheet } from "./components/SessionSheet";
 import { ActivityEditor } from "./components/ActivityEditor";
+import { CalendarSheet } from "./components/CalendarSheet";
 import { WeekView } from "./views/WeekView";
 import { LibraryView } from "./views/LibraryView";
 import { PacesView } from "./views/PacesView";
 import { SettingsView } from "./views/SettingsView";
 import { StatsView } from "./views/StatsView";
+import { UpdateBanner } from "./components/UpdateBanner";
 
 type Modal =
   | { kind: "about" }
   | { kind: "add"; date: string }
   | { kind: "session"; id: string; justDone: boolean }
+  | { kind: "calendar"; id: string }
   | { kind: "edit"; activity: CustomActivity; isNew: boolean };
 
 export type Update = (fn: (d: AppData) => AppData) => void;
@@ -72,7 +75,8 @@ export function App() {
     toast.show(`Added ${activity.short} to ${dayName}`);
   };
 
-  const modalSession = modal?.kind === "session" ? data.sessions.find((s) => s.id === modal.id) : undefined;
+  const modalSession =
+    modal?.kind === "session" || modal?.kind === "calendar" ? data.sessions.find((s) => s.id === modal.id) : undefined;
 
   return (
     <>
@@ -128,6 +132,7 @@ export function App() {
               }
             }}
             onRemove={(s) => update((d) => removeSession(d, s.id))}
+            onCalendar={(s) => setModal({ kind: "calendar", id: s.id })}
           />
         )}
         {route === "library" && (
@@ -186,6 +191,15 @@ export function App() {
           toast={toast.show}
         />
       )}
+      {modal?.kind === "calendar" && modalSession && (
+        <CalendarSheet
+          data={data}
+          session={modalSession}
+          activity={findActivity(data, modalSession.activityId)}
+          onClose={() => setModal(null)}
+          toast={toast.show}
+        />
+      )}
       {modal?.kind === "edit" && (
         <ActivityEditor
           initial={modal.activity}
@@ -207,6 +221,7 @@ export function App() {
           onClose={() => setModal(null)}
         />
       )}
+      <UpdateBanner onOfflineReady={() => toast.show("Ready to use offline")} />
       <Toast state={toast} />
     </>
   );

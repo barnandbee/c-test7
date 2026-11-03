@@ -13,12 +13,13 @@ Personal fitness "pick list" web app. Static site, no backend, single user. Host
 - `npm run build` – `tsc --noEmit` then `vite build` (run before every commit)
 
 ## Layout
-- `src/data/` – editable content: `library.ts` (built-in activities) and `categories.ts`. Keep content out of UI code.
-- `src/lib/` – pure, tested logic (dates, storage, migrations, targets, spacing, sessions/logs, activities/favourites, paces, stats, backup, number parsing, chart ticks). No DOM or Preact imports here, except `storage.ts`, which takes a `Storage` argument so tests can pass a fake.
+- `src/data/` – editable content: `library.ts` (built-in activities), `categories.ts` and `rosettes.ts` (awards). Keep content out of UI code.
+- `src/lib/` – pure, tested logic (dates, storage, migrations, targets, spacing, sessions/logs, activities/favourites, paces, stats, rosettes, calendar files (`ics.ts`), backup, number parsing, chart ticks). No DOM or Preact imports here, except `storage.ts`, which takes a `Storage` argument so tests can pass a fake.
 - `src/route.ts` – hash routing (`#/`, `#/library`, `#/paces`, `#/stats`, `#/settings`). No router library.
 - `src/views/` – one component per tab. `src/components/` – shared pieces. Modals use `Sheet` (native `<dialog>`); `app.tsx` owns which one is open.
 - State lives in `app.tsx` and changes through `update(fn)`, where `fn` is a pure `AppData → AppData` function from `src/lib/`.
-- `src/styles/tokens.css` – all colours. `app.css` – layout.
+- `src/download.ts` – saves a text file (backups, calendar files). `src/components/UpdateBanner.tsx` registers the service worker.
+- `src/styles/tokens.css` – all colours. `app.css` – layout. `components.css` – everything added since.
 
 ## Conventions
 - **British English** everywhere: UI text, comments, docs ("colour", "favourites", "kilometre").
@@ -36,6 +37,12 @@ Personal fitness "pick list" web app. Static site, no backend, single user. Host
 - **Changing the data shape:** bump `CURRENT_VERSION` in `src/lib/migrations.ts`, add a migration from the previous version, and add a test. Never edit an old migration. `normalise()` fills defaults for optional fields.
 - If stored data fails to load, the app must not save over it.
 - The repo is public. Never commit personal data (race times, logs), exported backups, or names or identifying details in library text. Defaults in code must be empty.
+
+## Offline (PWA)
+- `vite-plugin-pwa` in `vite.config.ts` generates the manifest and a Workbox service worker that precaches the whole build, fonts included.
+- `registerType: "prompt"`: a new version waits until the user taps Reload in `UpdateBanner`. Don't switch to auto-reload; it could drop a half-filled form.
+- Icons live in `public/icons/` and are made from the Bass Moultapps logo. The maskable icon keeps the logo inside the central 80%.
+- If you add a new kind of static file, check it's covered by `workbox.globPatterns`.
 
 ## Deploy
 - `.github/workflows/deploy.yml`: PRs build and test only. Pushes to `main` deploy to Pages.
